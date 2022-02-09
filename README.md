@@ -1,5 +1,7 @@
 # Etapa 1 Analizador Lexico
 
-Primer entregable, el analizador lexico es capaz de reconocer:
--Identificadores
--Reales
+Primer entregable Mini Generador Lexico, el analizador lexico es capaz de reconocer:
+
+- Identificadores
+- Enteros
+- Reales

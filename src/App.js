@@ -1,6 +1,6 @@
 // import logo from './logo.svg';
 import './App.css';
-import Lexical from './Lexical';
+import Lexer from './Lexer';
 
 function App() {
 	// document.getElementById('textbox').addEventListener('keydown', function (e) {
@@ -20,11 +20,19 @@ function App() {
 
 	const translate = () => {
 		const text = document.querySelector('#editor').value;
-		const lexical = new Lexical();
-		// lexical.getTypes(text);
 		const result = document.querySelector('#result');
-		result.value = lexical.getTypes(text);
-		// return lexical.getTypes(text);
+		const lexer = new Lexer();
+
+		if (text.length > 0) {
+			console.log('entro');
+			let elements = lexer.getTypes(text);
+			let test = '';
+			elements.forEach((element) => {
+				test += `${element.token}:  ${element.lexeme}\n`;
+			});
+			result.value = test;
+		}
+		// return lexer.getTypes(text);
 	};
 
 	return (
