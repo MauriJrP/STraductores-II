@@ -19,12 +19,13 @@ class Lexer {
 		this.symbols = new Set([';', ',', '(', ')', '{', '}', '$']);
 	}
 
-	getTypes = (text) => {
+	getElements = (text) => {
 		// [{ token: 'test1', lexeme: 'test1' }];
 		let elements = [];
 		let state = 'nextToken';
 		let lexeme = '';
 		let token = '';
+		let type = '';
 
 		// -------- ------- ------ ----- Lexer ----- ------ ------- --------
 		let i = 0;
@@ -37,13 +38,15 @@ class Lexer {
 					state = 'identifier';
 				else if (this.isNumber(text[i])) state = 'number';
 				else if (this.isOperator(text[i], text[i + 1])) state = 'operator';
-				// else if (this.isSymbol(text[i])) state = 'symbol';
+				else if (this.isSymbol(text[i])) state = 'symbol';
 				else state = 'error';
 			}
 
 			if (this.isTokenComplete(text[i], i, text.length)) {
 				token = this.getToken(state, lexeme);
-				if (lexeme !== '') elements.push({ token: token, lexeme: lexeme });
+				type = this.getType(token);
+				if (lexeme !== '')
+					elements.push({ token: token, lexeme: lexeme, type: type });
 				lexeme = '';
 				state = 'nextToken';
 				++i;
@@ -74,6 +77,8 @@ class Lexer {
 
 				if (isTwoChar) lexeme += text[i++] + text[i++];
 				else lexeme += text[i++];
+			} else if (state === 'symbol') {
+				lexeme += text[i++];
 			} else {
 				console.log('error');
 				++i;
@@ -85,9 +90,17 @@ class Lexer {
 	};
 
 	getToken = (state, lexeme) => {
-		if (state === 'identifier') return 'identificador';
-		else if (state === 'number') return 'entero';
-		else if (state === 'float') return 'flotante';
+		if (state === 'identifier') {
+			if (lexeme === 'if') return 'if';
+			else if (lexeme === 'else') return 'else';
+			else if (lexeme === 'while') return 'while';
+			else if (lexeme === 'return') return 'return';
+			else if (lexeme === 'int') return 'int';
+			else if (lexeme === 'float') return 'float';
+			else if (lexeme === 'void') return 'void';
+			else return 'identificador';
+		} else if (state === 'number') return 'entero';
+		else if (state === 'float') return 'real';
 		else if (state === 'operator') {
 			if (
 				lexeme === '<=' ||
@@ -103,11 +116,47 @@ class Lexer {
 			else if (lexeme === '+' || lexeme === '-') return 'opSuma';
 			else if (lexeme === '*' || lexeme === '/') return 'opMul';
 			else if (lexeme === '=') return 'opAsignacion';
-		} else if (state === 'symbol') return 'simbolo';
-		else if (state === 'error') return 'error';
+			else return 'operador';
+		} else if (state === 'symbol') {
+			if (lexeme === ';') return ';';
+			else if (lexeme === ',') return ',';
+			else if (lexeme === '(') return '(';
+			else if (lexeme === ')') return ')';
+			else if (lexeme === '{') return '{';
+			else if (lexeme === '}') return '}';
+			else if (lexeme === '$') return '$';
+			else return 'simbolo';
+		} else if (state === 'error') return 'error';
 	};
 
-	//test if char is a letter using regex
+	getType = (token) => {
+		if (token === 'identificador') return '0';
+		else if (token === 'entero') return '1';
+		else if (token === 'real') return '2';
+		else if (token === 'cadena') return '3';
+		else if (token === 'int' || token === 'float' || token === 'void')
+			return '4';
+		else if (token === 'opSuma') return '5';
+		else if (token === 'opMul') return '6';
+		else if (token === 'opRelac') return '7';
+		else if (token === 'opOr') return '8';
+		else if (token === 'opAnd') return '9';
+		else if (token === 'opNot') return '10';
+		else if (token === 'opIgualdad') return '11';
+		else if (token === ';') return '12';
+		else if (token === ',') return '13';
+		else if (token === '(') return '14';
+		else if (token === ')') return '15';
+		else if (token === '{') return '16';
+		else if (token === '}') return '17';
+		else if (token === '=') return '18';
+		else if (token === 'if') return '19';
+		else if (token === 'while') return '20';
+		else if (token === 'return') return '21';
+		else if (token === 'else') return '22';
+		else if (token === '$') return '23';
+	};
+
 	isTokenComplete = (c, i, l) => {
 		if (c === ' ' || c === '\n' || c === '\t' || i === l) return true;
 		else return false;
@@ -117,6 +166,7 @@ class Lexer {
 	isOperator = (char, char2) =>
 		this.operators.has(char) || this.operators.has(char + char2);
 	isTwoCharOperator = (char, char2) => this.operators.has(char + char2);
+	isSymbol = (char) => this.symbols.has(char);
 }
 
 export default Lexer;

@@ -25,14 +25,13 @@ function App() {
 
 		if (text.length > 0) {
 			console.log('entro');
-			let elements = lexer.getTypes(text);
+			let elements = lexer.getElements(text);
 			let test = '';
 			elements.forEach((element) => {
 				test += `${element.token}:  ${element.lexeme}\n`;
 			});
 			result.value = test;
 		}
-		// return lexer.getTypes(text);
 	};
 
 	return (
