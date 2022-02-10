@@ -21,6 +21,8 @@ class Lexer {
 
 	getElements = (text) => {
 		// [{ token: 'test1', lexeme: 'test1' }];
+		let inString = false;
+		let stringStack = [];
 		let elements = [];
 		let state = 'nextToken';
 		let lexeme = '';
@@ -39,10 +41,13 @@ class Lexer {
 				else if (this.isNumber(text[i])) state = 'number';
 				else if (this.isOperator(text[i], text[i + 1])) state = 'operator';
 				else if (this.isSymbol(text[i])) state = 'symbol';
-				else state = 'error';
+				else if (text[i] === '"') {
+					state = 'string';
+					inString = true;
+				} else state = 'error';
 			}
 
-			if (this.isTokenComplete(text[i], i, text.length)) {
+			if (this.isTokenComplete(text[i], i, text.length) && inString === false) {
 				token = this.getToken(state, lexeme);
 				type = this.getType(token);
 				if (lexeme !== '')
@@ -56,6 +61,18 @@ class Lexer {
 				else {
 					lexeme += text[i++];
 					state = 'error';
+				}
+			} else if (state === 'string') {
+				if (
+					(stringStack.length === 0 && text[i] === '"') ||
+					(stringStack.length > 0 && text[i] !== '"')
+				) {
+					if (text[i] === '"') stringStack.push(text[i]);
+					lexeme += text[i++];
+				} else {
+					lexeme += text[i++];
+					inString = false;
+					stringStack = [];
 				}
 			} else if (state === 'number') {
 				if (this.isNumber(text[i])) lexeme += text[i++];
@@ -99,7 +116,8 @@ class Lexer {
 			else if (lexeme === 'float') return 'float';
 			else if (lexeme === 'void') return 'void';
 			else return 'identificador';
-		} else if (state === 'number') return 'entero';
+		} else if (state === 'string') return 'cadena';
+		else if (state === 'number') return 'entero';
 		else if (state === 'float') return 'real';
 		else if (state === 'operator') {
 			if (
@@ -149,7 +167,7 @@ class Lexer {
 		else if (token === ')') return '15';
 		else if (token === '{') return '16';
 		else if (token === '}') return '17';
-		else if (token === '=') return '18';
+		else if (token === 'opAsignacion') return '18';
 		else if (token === 'if') return '19';
 		else if (token === 'while') return '20';
 		else if (token === 'return') return '21';

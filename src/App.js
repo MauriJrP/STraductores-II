@@ -28,7 +28,9 @@ function App() {
 			let elements = lexer.getElements(text);
 			let test = '';
 			elements.forEach((element) => {
-				test += `${element.token}:  ${element.lexeme}\n`;
+				test += `${element.type.padEnd(5, ' ')}${element.token}:\n\t->\t${
+					element.lexeme
+				}\n`;
 			});
 			result.value = test;
 		}
