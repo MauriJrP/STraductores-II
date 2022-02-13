@@ -1,7 +1,3 @@
 # Etapa 1 Analizador Lexico
 
-Primer entregable Mini Generador Lexico, el analizador lexico es capaz de reconocer:
-
-- Identificadores
-- Enteros
-- Reales
+El analizador lexico es capaz de reconocer los 23 simbolos lexicos requeridos y regresar su tipo.
