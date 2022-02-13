@@ -21,7 +21,7 @@ class Lexer {
 
 	getElements = (text) => {
 		// [{ token: 'test1', lexeme: 'test1' }];
-		let inString = false;
+		let tokenComplete = false;
 		let stringStack = [];
 		let elements = [];
 		let state = 'nextToken';
@@ -32,32 +32,34 @@ class Lexer {
 		// -------- ------- ------ ----- Lexer ----- ------ ------- --------
 		let i = 0;
 		while (i <= text.length) {
-			if (state == 'nextToken') {
-				if (text[i] === ' ' || text[i] === '\n' || text[i] === '\t') {
-					++i;
-					continue;
-				} else if (this.isLetter(text[i]) || text[i] === '_')
-					state = 'identifier';
-				else if (this.isNumber(text[i])) state = 'number';
-				else if (this.isOperator(text[i], text[i + 1])) state = 'operator';
-				else if (this.isSymbol(text[i])) state = 'symbol';
-				else if (text[i] === '"') {
-					state = 'string';
-					inString = true;
-				} else state = 'error';
-			}
-
-			if (this.isTokenComplete(text[i], i, text.length) && inString === false) {
+			if (this.isTokenComplete(text[i], i, text.length, state, tokenComplete)) {
+				tokenComplete = false;
 				token = this.getToken(state, lexeme);
 				type = this.getType(token);
 				if (lexeme !== '')
 					elements.push({ token: token, lexeme: lexeme, type: type });
 				lexeme = '';
 				state = 'nextToken';
-				++i;
+				if (text.length === i) ++i; // Avoid infinite loop
+			}
+
+			if (state === 'nextToken') {
+				// skip whitespace
+				if (text[i] === ' ' || text[i] === '\n' || text[i] === '\t') ++i;
+				else if (this.isLetter(text[i]) || text[i] === '_')
+					state = 'identifier';
+				else if (this.isNumber(text[i])) state = 'number';
+				else if (this.isOperator(text[i], text[i + 1])) state = 'operator';
+				else if (this.isSymbol(text[i])) state = 'symbol';
+				else if (text[i] === '"') {
+					state = 'string';
+				} else state = 'error';
 			} else if (state === 'identifier') {
 				if (this.isLetter(text[i]) || text[i] === '_' || this.isNumber(text[i]))
 					lexeme += text[i++];
+				else if (this.isOperator(text[i], text[i + 1])) tokenComplete = true;
+				else if (text[i] !== '$' && this.isSymbol(text[i]))
+					tokenComplete = true;
 				else {
 					lexeme += text[i++];
 					state = 'error';
@@ -71,7 +73,7 @@ class Lexer {
 					lexeme += text[i++];
 				} else {
 					lexeme += text[i++];
-					inString = false;
+					tokenComplete = true;
 					stringStack = [];
 				}
 			} else if (state === 'number') {
@@ -79,12 +81,18 @@ class Lexer {
 				else if (text[i] === '.') {
 					lexeme += text[i++];
 					state = 'float';
-				} else {
+				} else if (this.isOperator(text[i], text[i + 1])) tokenComplete = true;
+				else if (text[i] !== '$' && this.isSymbol(text[i]))
+					tokenComplete = true;
+				else {
 					lexeme += text[i++];
 					state = 'error';
 				}
 			} else if (state === 'float') {
 				if (this.isNumber(text[i])) lexeme += text[i++];
+				else if (this.isOperator(text[i], text[i + 1])) tokenComplete = true;
+				else if (text[i] !== '$' && this.isSymbol(text[i]))
+					tokenComplete = true;
 				else {
 					lexeme += text[i++];
 					state = 'error';
@@ -94,8 +102,10 @@ class Lexer {
 
 				if (isTwoChar) lexeme += text[i++] + text[i++];
 				else lexeme += text[i++];
+				tokenComplete = true;
 			} else if (state === 'symbol') {
 				lexeme += text[i++];
+				tokenComplete = true;
 			} else {
 				console.log('error');
 				++i;
@@ -173,10 +183,12 @@ class Lexer {
 		else if (token === 'return') return '21';
 		else if (token === 'else') return '22';
 		else if (token === '$') return '23';
+		else if (token === 'error') return '24';
 	};
 
-	isTokenComplete = (c, i, l) => {
-		if (c === ' ' || c === '\n' || c === '\t' || i === l) return true;
+	isTokenComplete = (c, i, l, state, tc) => {
+		if (state === 'string' && !tc) return false;
+		if (c === ' ' || c === '\n' || c === '\t' || i === l || tc) return true;
 		else return false;
 	};
 	isLetter = (char) => /[a-zA-Z]/.test(char);

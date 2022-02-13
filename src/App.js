@@ -24,7 +24,6 @@ function App() {
 		const lexer = new Lexer();
 
 		if (text.length > 0) {
-			console.log('entro');
 			let elements = lexer.getElements(text);
 			let test = '';
 			elements.forEach((element) => {
