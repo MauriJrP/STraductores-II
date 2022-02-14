@@ -24,8 +24,9 @@ function App() {
 		const parser = new Parser();
 
 		if (text.length > 0) {
-			let state = parser.parse1(text);
-			result.value = state;
+			let state1 = parser.parse1(text); // exercise 1
+			let state2 = parser.parse2(state1); // exercise 2
+			result.value = 'Ejercicio 1: ' + state1 + '\nEjercicio 2: ' + state2;
 		}
 	};
 

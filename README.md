@@ -1,3 +1,6 @@
-# Etapa 1 Analizador Lexico
+# Etapa 2 Analizador Sintactico
 
-El analizador lexico es capaz de reconocer los 23 simbolos lexicos requeridos y regresar su tipo.
+El analizador sintactico es capaz de reconocer las reglas:
+
+- E -> id + id
+- E -> id + E | id

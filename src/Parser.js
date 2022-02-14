@@ -19,9 +19,9 @@ class Parser {
 			// temporary solution for types validation
 			let newType = element.type;
 			if (element.type === '5') newType = '1';
-			else if (element.type === '23') newType = '2';
 			return parseInt(newType);
 		});
+		elements.push(2); // $ symbol for the end of the input
 		console.log('elements: ' + elements);
 
 		stack.push('$');
@@ -74,17 +74,17 @@ class Parser {
 		const table = [
 			[2, 0, 0, 1],
 			[0, 0, -1, 0],
-			[0, 3, 0, 0],
-			[4, 0, 0, 0],
+			[0, 3, -3, 0],
+			[2, 0, 0, 4],
 			[0, 0, -2, 0],
 		];
 		let elements = lexer.getElements(input).map((element) => {
 			// temporary solution for types validation
 			let newType = element.type;
 			if (element.type === '5') newType = '1';
-			else if (element.type === '23') newType = '2';
 			return parseInt(newType);
 		});
+		elements.push(2); // $ symbol for the end of the input
 		console.log('elements: ' + elements);
 
 		stack.push('$');
@@ -109,6 +109,14 @@ class Parser {
 				stack.pop();
 				let top = stack.top();
 				stack.push(3); // rule 1
+				stack.push(table[top][stack.top()]);
+				--i;
+			} else if (action === -3) {
+				// 2 pop bc there are 1 token in the rule
+				stack.pop();
+				stack.pop();
+				let top = stack.top();
+				stack.push(3); // rule E
 				stack.push(table[top][stack.top()]);
 				--i;
 			} else if (action === 1) {
