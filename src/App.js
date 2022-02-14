@@ -1,6 +1,6 @@
 // import logo from './logo.svg';
 import './App.css';
-import Lexer from './Lexer';
+import Parser from './Parser';
 
 function App() {
 	// document.getElementById('textbox').addEventListener('keydown', function (e) {
@@ -21,17 +21,11 @@ function App() {
 	const translate = () => {
 		const text = document.querySelector('#editor').value;
 		const result = document.querySelector('#result');
-		const lexer = new Lexer();
+		const parser = new Parser();
 
 		if (text.length > 0) {
-			let elements = lexer.getElements(text);
-			let test = '';
-			elements.forEach((element) => {
-				test += `${element.type.padEnd(5, ' ')}${element.token}:\n\t->\t${
-					element.lexeme
-				}\n`;
-			});
-			result.value = test;
+			let state = parser.parse1(text);
+			result.value = state;
 		}
 	};
 

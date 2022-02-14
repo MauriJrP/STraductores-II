@@ -112,7 +112,7 @@ class Lexer {
 			}
 		}
 
-		console.log(elements);
+		// console.log(elements);
 		return elements;
 	};
 
