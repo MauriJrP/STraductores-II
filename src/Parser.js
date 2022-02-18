@@ -1,5 +1,7 @@
 import Stack from './Stack';
 import Lexer from './Lexer';
+import StackElement from './StackElement';
+import { Terminal, NonTerminal, State, Node } from './StackElement';
 
 class Parser {
 	constructor() {}
@@ -19,21 +21,26 @@ class Parser {
 			// temporary solution for types validation
 			let newType = element.type;
 			if (element.type === '5') newType = '1';
-			return parseInt(newType);
+			return {
+				lexeme: element.lexeme,
+				type: parseInt(newType),
+			};
 		});
-		elements.push(2); // $ symbol for the end of the input
-		console.log('elements: ' + elements);
+		elements.push({ lexeme: '$', type: 2 }); // $ symbol for the end of the input
+		// console.log('elements: ');
+		// console.log(elements);
 
-		stack.push('$');
-		stack.push(0);
+		stack.push(new StackElement(2, '$'));
+		stack.push(new StackElement(0));
+		// stack.print();
 
 		let i = 0;
 		let action = 0;
 		while (state === '') {
 			// console.log(elements[i]);
-			action = table[stack.top()][elements[i]];
-			console.log(action);
-			stack.print();
+			action = table[stack.top().type][elements[i].type];
+			// console.log(action);
+			// stack.print();
 			if (action === 0) state = 'error';
 			else if (action === -1) state = 'accept';
 			else if (action === -2) {
@@ -44,22 +51,23 @@ class Parser {
 				stack.pop();
 				stack.pop();
 				stack.pop();
-				let top = stack.top();
-				stack.push(3); // rule 1
-				stack.push(table[top][stack.top()]);
+				let top = stack.top().type;
+				stack.push(new StackElement(3, 'E')); // NonTerminal E
+				stack.push(new StackElement(table[top][stack.top().type]));
 				--i;
 			} else if (action === 1) {
-				stack.push(elements[i]);
-				stack.push(1);
+				// shift 1
+				stack.push(new StackElement(elements[i].type, elements[i].lexeme));
+				stack.push(new StackElement(1));
 			} else if (action === 2) {
-				stack.push(elements[i]);
-				stack.push(2);
+				stack.push(new StackElement(elements[i].type, elements[i].lexeme));
+				stack.push(new StackElement(2));
 			} else if (action === 3) {
-				stack.push(elements[i]);
-				stack.push(3);
+				stack.push(new StackElement(elements[i].type, elements[i].lexeme));
+				stack.push(new StackElement(3));
 			} else if (action === 4) {
-				stack.push(elements[i]);
-				stack.push(4);
+				stack.push(new StackElement(elements[i].type, elements[i].lexeme));
+				stack.push(new StackElement(4));
 			}
 			++i;
 		}
@@ -82,20 +90,22 @@ class Parser {
 			// temporary solution for types validation
 			let newType = element.type;
 			if (element.type === '5') newType = '1';
-			return parseInt(newType);
+			return {
+				lexeme: element.lexeme,
+				type: parseInt(newType),
+			};
 		});
-		elements.push(2); // $ symbol for the end of the input
-		console.log('elements: ' + elements);
+		elements.push({ lexeme: '$', type: 2 }); // $ symbol for the end of the input
+		console.log(elements);
 
-		stack.push('$');
-		stack.push(0);
+		stack.push(new StackElement(2, '$'));
+		stack.push(new StackElement(0));
 
 		let i = 0;
 		let action = 0;
 		while (state === '') {
 			// console.log(elements[i]);
-			action = table[stack.top()][elements[i]];
-			console.log(action);
+			action = table[stack.top().type][elements[i].type];
 			stack.print();
 			if (action === 0) state = 'error';
 			else if (action === -1) state = 'accept';
@@ -107,30 +117,30 @@ class Parser {
 				stack.pop();
 				stack.pop();
 				stack.pop();
-				let top = stack.top();
-				stack.push(3); // rule 1
-				stack.push(table[top][stack.top()]);
+				let top = stack.top().type;
+				stack.push(new StackElement(3, 'E')); // rule 1
+				stack.push(new StackElement(table[top][stack.top().type]));
 				--i;
 			} else if (action === -3) {
 				// 2 pop bc there are 1 token in the rule
 				stack.pop();
 				stack.pop();
-				let top = stack.top();
-				stack.push(3); // rule E
-				stack.push(table[top][stack.top()]);
+				let top = stack.top().type;
+				stack.push(new StackElement(3, 'E')); // rule E
+				stack.push(new StackElement(table[top][stack.top().type]));
 				--i;
 			} else if (action === 1) {
-				stack.push(elements[i]);
-				stack.push(1);
+				stack.push(new StackElement(elements[i].type, elements[i].lexeme));
+				stack.push(new StackElement(1));
 			} else if (action === 2) {
-				stack.push(elements[i]);
-				stack.push(2);
+				stack.push(new StackElement(elements[i].type, elements[i].lexeme));
+				stack.push(new StackElement(2));
 			} else if (action === 3) {
-				stack.push(elements[i]);
-				stack.push(3);
+				stack.push(new StackElement(elements[i].type, elements[i].lexeme));
+				stack.push(new StackElement(3));
 			} else if (action === 4) {
-				stack.push(elements[i]);
-				stack.push(4);
+				stack.push(new StackElement(elements[i].type, elements[i].lexeme));
+				stack.push(new StackElement(4));
 			}
 			++i;
 		}
