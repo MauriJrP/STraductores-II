@@ -17,6 +17,7 @@ class Lexer {
 			'||',
 		]);
 		this.symbols = new Set([';', ',', '(', ')', '{', '}', '$']);
+		this.i = 0; // index of the current element
 	}
 
 	getElements = (text) => {
@@ -114,6 +115,97 @@ class Lexer {
 
 		// console.log(elements);
 		return elements;
+	};
+
+	nextToken = (text) => {
+		let tokenComplete = false;
+		let stringStack = [];
+		let state = 'nextToken';
+		let lexeme = '';
+		let token = '';
+		let type = '';
+
+		// -------- ------- ------ ----- Lexer ----- ------ ------- --------
+		let i = this.i;
+		if (text.length === i) return null;
+
+		while (i <= text.length) {
+			if (this.isTokenComplete(text[i], i, text.length, state, tokenComplete)) {
+				tokenComplete = false;
+				token = this.getToken(state, lexeme);
+				type = this.getType(token);
+				this.i = i;
+				if (lexeme !== '') return { token, lexeme, type };
+			}
+
+			if (state === 'nextToken') {
+				// skip whitespace
+				if (text[i] === ' ' || text[i] === '\n' || text[i] === '\t') ++i;
+				else if (this.isLetter(text[i]) || text[i] === '_')
+					state = 'identifier';
+				else if (this.isNumber(text[i])) state = 'number';
+				else if (this.isOperator(text[i], text[i + 1])) state = 'operator';
+				else if (this.isSymbol(text[i])) state = 'symbol';
+				else if (text[i] === '"') {
+					state = 'string';
+				} else state = 'error';
+			} else if (state === 'identifier') {
+				if (this.isLetter(text[i]) || text[i] === '_' || this.isNumber(text[i]))
+					lexeme += text[i++];
+				else if (this.isOperator(text[i], text[i + 1])) tokenComplete = true;
+				else if (text[i] !== '$' && this.isSymbol(text[i]))
+					tokenComplete = true;
+				else {
+					lexeme += text[i++];
+					state = 'error';
+				}
+			} else if (state === 'string') {
+				if (
+					(stringStack.length === 0 && text[i] === '"') ||
+					(stringStack.length > 0 && text[i] !== '"')
+				) {
+					if (text[i] === '"') stringStack.push(text[i]);
+					lexeme += text[i++];
+				} else {
+					lexeme += text[i++];
+					tokenComplete = true;
+					stringStack = [];
+				}
+			} else if (state === 'number') {
+				if (this.isNumber(text[i])) lexeme += text[i++];
+				else if (text[i] === '.') {
+					lexeme += text[i++];
+					state = 'float';
+				} else if (this.isOperator(text[i], text[i + 1])) tokenComplete = true;
+				else if (text[i] !== '$' && this.isSymbol(text[i]))
+					tokenComplete = true;
+				else {
+					lexeme += text[i++];
+					state = 'error';
+				}
+			} else if (state === 'float') {
+				if (this.isNumber(text[i])) lexeme += text[i++];
+				else if (this.isOperator(text[i], text[i + 1])) tokenComplete = true;
+				else if (text[i] !== '$' && this.isSymbol(text[i]))
+					tokenComplete = true;
+				else {
+					lexeme += text[i++];
+					state = 'error';
+				}
+			} else if (state === 'operator') {
+				let isTwoChar = this.isTwoCharOperator(text[i], text[i + 1]);
+
+				if (isTwoChar) lexeme += text[i++] + text[i++];
+				else lexeme += text[i++];
+				tokenComplete = true;
+			} else if (state === 'symbol') {
+				lexeme += text[i++];
+				tokenComplete = true;
+			} else {
+				console.log('error');
+				++i;
+			}
+		}
 	};
 
 	getToken = (state, lexeme) => {
