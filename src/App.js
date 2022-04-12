@@ -1,33 +1,51 @@
-// import logo from './logo.svg';
+import { useState } from 'react';
 import './App.css';
 import Parser from './Parser';
 
-function App() {
-	// document.getElementById('textbox').addEventListener('keydown', function (e) {
-	// 	if (e.key == 'Tab') {
-	// 		e.preventDefault();
-	// 		var start = this.selectionStart;
-	// 		var end = this.selectionEnd;
+export default function App() {
+	const [formData, setFormData] = useState({ input: '', output: '' });
 
-	// 		// set textarea value to: text before caret + tab + text after caret
-	// 		this.value =
-	// 			this.value.substring(0, start) + '\t' + this.value.substring(end);
+	const handleChange = (e) => {
+		const { name, value } = e.target;
+		setFormData((prevState) => ({
+			...prevState,
+			[name]: value,
+		}));
+	};
 
-	// 		// put caret at right position again
-	// 		this.selectionStart = this.selectionEnd = start + 1;
-	// 	}
-	// });
+	// handle tabs in textarea
+	const handleKeyDown = (e) => {
+		const textarea = e.target;
+		if (e.key === 'Tab' && !e.shiftKey) {
+			e.preventDefault();
+			const selectionStart = textarea.selectionStart;
+			const selectionEnd = textarea.selectionEnd;
+			setFormData((prevState) => ({
+				...prevState,
+				input:
+					prevState.input.substring(0, selectionStart) +
+					'  ' +
+					prevState.input.substring(selectionEnd),
+			}));
+
+			textarea.selectionStart =
+				selectionEnd + 2 - (selectionEnd - selectionStart);
+			textarea.selectionEnd =
+				selectionEnd + 2 - (selectionEnd - selectionStart);
+		}
+	};
 
 	const translate = () => {
-		const text = document.querySelector('#editor').value;
-		const result = document.querySelector('#result');
 		const parser = new Parser();
 
-		if (text.length > 0) {
-			let state1 = parser.parse1(text); // exercise 1
-			let state2 = parser.parse2(text); // exercise 2
-			// result.value = 'Ejercicio 1: ' + state1;
-			result.value = 'Ejercicio 1: ' + state1 + '\nEjercicio 2: ' + state2;
+		if (formData.input.length > 0) {
+			let state1 = parser.parse1(formData.input); // exercise 1
+			let state2 = parser.parse2(formData.input); // exercise 2
+			// output.value = 'Ejercicio 1: ' + state1;
+			setFormData((prevState) => ({
+				...prevState,
+				output: 'Ejercicio 1: ' + state1 + '\nEjercicio 2: ' + state2,
+			}));
 		}
 	};
 
@@ -37,18 +55,20 @@ function App() {
 				Traductor
 			</h1>
 			<div className="container mx-auto bg-slate-100 md:py-20 grid md:grid-cols-5 lg:grid-cols-7 gap-x-10">
-				<div className="editor flex flex-col items-center md:col-span-2 lg:col-span-3">
-					<h2 className="text-3xl font-bold bg-slate-900 text-white w-full text-center">
+				<div className="flex flex-col items-center md:col-span-2 lg:col-span-3">
+					<h2 className="text-3xl font-bold bg-slate-700 text-white w-full text-center">
 						Editor
 					</h2>
 					<textarea
-						id="editor"
-						name="editor"
+						name="input"
 						cols="60"
 						rows="20"
 						autoFocus={true}
 						className="px-3 py-5 bg-slate-50 border-2 border-t-0 border-slate-700 resize-none text-sm outline-0 w-full font-bold"
-					></textarea>
+						onChange={handleChange}
+						onKeyDown={handleKeyDown}
+						value={formData.input}
+					/>
 				</div>
 				<div className="h-24 md:h-full flex flex-col justify-center">
 					<div
@@ -65,23 +85,20 @@ function App() {
 						/>
 					</div>
 				</div>
-				<div className="result flex flex-col items-center md:col-span-2 lg:col-span-3">
-					<h2 className="text-3xl font-bold bg-slate-900 text-white w-full text-center">
+				<div className="output flex flex-col items-center md:col-span-2 lg:col-span-3">
+					<h2 className="text-3xl font-bold bg-slate-700 text-white w-full text-center">
 						Resultado
 					</h2>
 					<textarea
-						id="result"
-						name="editor"
+						name="output"
 						rows="20"
 						autoFocus={true}
 						className="px-3 py-5 bg-slate-50 border-2 border-t-0 border-slate-700 resize-none text-sm outline-0 w-full font-bold"
 						readOnly={true}
-					></textarea>
+						value={formData.output}
+					/>
 				</div>
 			</div>
-			{/* <img src={logo} className="App-logo" alt="logo" /> */}
 		</div>
 	);
 }
-
-export default App;
