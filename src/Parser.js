@@ -1,6 +1,7 @@
 import Stack from './Stack';
 import Lexer from './Lexer';
 import StackElement from './StackElement';
+import LrTable from './LrTable';
 import {
 	E1,
 	E2,
@@ -13,6 +14,12 @@ import {
 
 class Parser {
 	constructor() {}
+
+	parse = (input) => {
+		const rows = LrTable().split('\n');
+		const table = rows.map((row) => row.split('\t'));
+		console.log(table);
+	};
 
 	parse1 = (input) => {
 		let stack = new Stack();
@@ -34,42 +41,42 @@ class Parser {
 
 		// let i = 0;
 		let action = 1;
-		let token = { type: 0, lexeme: '' };
+		let token = { column: 0, lexeme: '' };
 
 		while (state === '') {
 			if (action > 0 && token.lexeme !== '$') {
 				token = lexer.nextToken(input);
-				if (token === null) token = { lexeme: '$', type: 2 };
+				if (token === null) token = { lexeme: '$', column: 2 };
 				else
 					token = {
 						...token,
-						type: token.type === '5' ? 1 : parseInt(token.type),
+						column: token.column === '5' ? 1 : parseInt(token.column),
 					};
 			}
 
-			action = table[stack.top().type][token.type];
+			action = table[stack.top().column][token.column];
 
 			if (action === 0) state = 'error';
 			else if (action === -1) state = 'accept';
 			else if (action === -2) {
 				tree = new E1(stack);
 
-				let top = stack.top().type;
+				let top = stack.top().column;
 				stack.push(new StackElement(3, 'E')); // NonTerminal E
-				stack.push(new StackElement(table[top][stack.top().type]));
+				stack.push(new StackElement(table[top][stack.top().column]));
 				// --i;
 			} else if (action === 1) {
 				// shift 1
-				stack.push(new StackElement(token.type, token.lexeme));
+				stack.push(new StackElement(token.column, token.lexeme));
 				stack.push(new StackElement(1));
 			} else if (action === 2) {
-				stack.push(new StackElement(token.type, token.lexeme));
+				stack.push(new StackElement(token.column, token.lexeme));
 				stack.push(new StackElement(2));
 			} else if (action === 3) {
-				stack.push(new StackElement(token.type, token.lexeme));
+				stack.push(new StackElement(token.column, token.lexeme));
 				stack.push(new StackElement(3));
 			} else if (action === 4) {
-				stack.push(new StackElement(token.type, token.lexeme));
+				stack.push(new StackElement(token.column, token.lexeme));
 				stack.push(new StackElement(4));
 			}
 		}
@@ -96,20 +103,20 @@ class Parser {
 		stack.push(new StackElement(0));
 
 		let action = 1;
-		let token = { type: 0, lexeme: '' };
+		let token = { column: 0, lexeme: '' };
 
 		while (state === '') {
 			if (action > 0 && token.lexeme !== '$') {
 				token = lexer.nextToken(input);
-				if (token === null) token = { lexeme: '$', type: 2 };
+				if (token === null) token = { lexeme: '$', column: 2 };
 				else
 					token = {
 						...token,
-						type: token.type === '5' ? 1 : parseInt(token.type),
+						column: token.column === '5' ? 1 : parseInt(token.column),
 					};
 			}
 
-			action = table[stack.top().type][token.type];
+			action = table[stack.top().column][token.column];
 			// stack.print();
 			if (action === 0) state = 'error';
 			else if (action === -1) state = 'accept';
@@ -117,27 +124,27 @@ class Parser {
 				// 6 pop bc there are 3 tokens in the rule
 				tree = new E2(stack);
 
-				let top = stack.top().type;
+				let top = stack.top().column;
 				stack.push(new StackElement(3, 'E')); // rule 1
-				stack.push(new StackElement(table[top][stack.top().type]));
+				stack.push(new StackElement(table[top][stack.top().column]));
 			} else if (action === -3) {
 				// 2 pop bc there are 1 token in the rule
 				tree = new E22(stack);
 
-				let top = stack.top().type;
+				let top = stack.top().column;
 				stack.push(new StackElement(3, 'E')); // rule E
-				stack.push(new StackElement(table[top][stack.top().type]));
+				stack.push(new StackElement(table[top][stack.top().column]));
 			} else if (action === 1) {
-				stack.push(new StackElement(token.type, token.lexeme));
+				stack.push(new StackElement(token.column, token.lexeme));
 				stack.push(new StackElement(1));
 			} else if (action === 2) {
-				stack.push(new StackElement(token.type, token.lexeme));
+				stack.push(new StackElement(token.column, token.lexeme));
 				stack.push(new StackElement(2));
 			} else if (action === 3) {
-				stack.push(new StackElement(token.type, token.lexeme));
+				stack.push(new StackElement(token.column, token.lexeme));
 				stack.push(new StackElement(3));
 			} else if (action === 4) {
-				stack.push(new StackElement(token.type, token.lexeme));
+				stack.push(new StackElement(token.column, token.lexeme));
 				stack.push(new StackElement(4));
 			}
 		}

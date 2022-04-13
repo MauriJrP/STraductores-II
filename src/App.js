@@ -37,6 +37,7 @@ export default function App() {
 
 	const translate = () => {
 		const parser = new Parser();
+		parser.parse(formData.input);
 
 		if (formData.input.length > 0) {
 			let state1 = parser.parse1(formData.input); // exercise 1

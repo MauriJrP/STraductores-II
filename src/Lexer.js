@@ -28,7 +28,7 @@ class Lexer {
 		let state = 'nextToken';
 		let lexeme = '';
 		let token = '';
-		let type = '';
+		let column = '';
 
 		// -------- ------- ------ ----- Lexer ----- ------ ------- --------
 		let i = 0;
@@ -36,9 +36,9 @@ class Lexer {
 			if (this.isTokenComplete(text[i], i, text.length, state, tokenComplete)) {
 				tokenComplete = false;
 				token = this.getToken(state, lexeme);
-				type = this.getType(token);
+				column = this.getColumn(token);
 				if (lexeme !== '')
-					elements.push({ token: token, lexeme: lexeme, type: type });
+					elements.push({ token: token, lexeme: lexeme, column: column });
 				lexeme = '';
 				state = 'nextToken';
 				if (text.length === i) ++i; // Avoid infinite loop
@@ -123,7 +123,7 @@ class Lexer {
 		let state = 'nextToken';
 		let lexeme = '';
 		let token = '';
-		let type = '';
+		let column = '';
 
 		// -------- ------- ------ ----- Lexer ----- ------ ------- --------
 		let i = this.i;
@@ -133,9 +133,9 @@ class Lexer {
 			if (this.isTokenComplete(text[i], i, text.length, state, tokenComplete)) {
 				tokenComplete = false;
 				token = this.getToken(state, lexeme);
-				type = this.getType(token);
+				column = this.getColumn(token);
 				this.i = i;
-				if (lexeme !== '') return { token, lexeme, type };
+				if (lexeme !== '') return { token, lexeme, column };
 			}
 
 			if (state === 'nextToken') {
@@ -249,7 +249,7 @@ class Lexer {
 		} else if (state === 'error') return 'error';
 	};
 
-	getType = (token) => {
+	getColumn = (token) => {
 		if (token === 'identificador') return '0';
 		else if (token === 'entero') return '1';
 		else if (token === 'real') return '2';
@@ -275,7 +275,7 @@ class Lexer {
 		else if (token === 'return') return '21';
 		else if (token === 'else') return '22';
 		else if (token === '$') return '23';
-		else if (token === 'error') return '24';
+		else if (token === 'error') return '-1';
 	};
 
 	isTokenComplete = (c, i, l, state, tc) => {
