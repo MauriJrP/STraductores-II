@@ -28,7 +28,7 @@ class Lexer {
 		let state = 'nextToken';
 		let lexeme = '';
 		let token = '';
-		let column = '';
+		let pos = 0;
 
 		// -------- ------- ------ ----- Lexer ----- ------ ------- --------
 		let i = 0;
@@ -36,9 +36,8 @@ class Lexer {
 			if (this.isTokenComplete(text[i], i, text.length, state, tokenComplete)) {
 				tokenComplete = false;
 				token = this.getToken(state, lexeme);
-				column = this.getColumn(token);
-				if (lexeme !== '')
-					elements.push({ token: token, lexeme: lexeme, column: column });
+				pos = this.getPos(token);
+				if (lexeme !== '') elements.push({ token, lexeme, pos });
 				lexeme = '';
 				state = 'nextToken';
 				if (text.length === i) ++i; // Avoid infinite loop
@@ -123,7 +122,7 @@ class Lexer {
 		let state = 'nextToken';
 		let lexeme = '';
 		let token = '';
-		let column = '';
+		let pos = 0;
 
 		// -------- ------- ------ ----- Lexer ----- ------ ------- --------
 		let i = this.i;
@@ -133,9 +132,9 @@ class Lexer {
 			if (this.isTokenComplete(text[i], i, text.length, state, tokenComplete)) {
 				tokenComplete = false;
 				token = this.getToken(state, lexeme);
-				column = this.getColumn(token);
+				pos = this.getPos(token);
 				this.i = i;
-				if (lexeme !== '') return { token, lexeme, column };
+				if (lexeme !== '') return { token, lexeme, pos };
 			}
 
 			if (state === 'nextToken') {
@@ -249,33 +248,32 @@ class Lexer {
 		} else if (state === 'error') return 'error';
 	};
 
-	getColumn = (token) => {
-		if (token === 'identificador') return '0';
-		else if (token === 'entero') return '1';
-		else if (token === 'real') return '2';
-		else if (token === 'cadena') return '3';
-		else if (token === 'int' || token === 'float' || token === 'void')
-			return '4';
-		else if (token === 'opSuma') return '5';
-		else if (token === 'opMul') return '6';
-		else if (token === 'opRelac') return '7';
-		else if (token === 'opOr') return '8';
-		else if (token === 'opAnd') return '9';
-		else if (token === 'opNot') return '10';
-		else if (token === 'opIgualdad') return '11';
-		else if (token === ';') return '12';
-		else if (token === ',') return '13';
-		else if (token === '(') return '14';
-		else if (token === ')') return '15';
-		else if (token === '{') return '16';
-		else if (token === '}') return '17';
-		else if (token === 'opAsignacion') return '18';
-		else if (token === 'if') return '19';
-		else if (token === 'while') return '20';
-		else if (token === 'return') return '21';
-		else if (token === 'else') return '22';
-		else if (token === '$') return '23';
-		else if (token === 'error') return '-1';
+	getPos = (token) => {
+		if (token === 'identificador') return 0;
+		else if (token === 'entero') return 1;
+		else if (token === 'real') return 2;
+		else if (token === 'cadena') return 3;
+		else if (token === 'int' || token === 'float' || token === 'void') return 4;
+		else if (token === 'opSuma') return 5;
+		else if (token === 'opMul') return 6;
+		else if (token === 'opRelac') return 7;
+		else if (token === 'opOr') return 8;
+		else if (token === 'opAnd') return 9;
+		else if (token === 'opNot') return 10;
+		else if (token === 'opIgualdad') return 11;
+		else if (token === ';') return 12;
+		else if (token === ',') return 13;
+		else if (token === '(') return 14;
+		else if (token === ')') return 15;
+		else if (token === '{') return 16;
+		else if (token === '}') return 17;
+		else if (token === 'opAsignacion') return 18;
+		else if (token === 'if') return 19;
+		else if (token === 'while') return 20;
+		else if (token === 'return') return 21;
+		else if (token === 'else') return 22;
+		else if (token === '$') return 23;
+		else if (token === 'error') return -1;
 	};
 
 	isTokenComplete = (c, i, l, state, tc) => {

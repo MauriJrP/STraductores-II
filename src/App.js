@@ -37,15 +37,12 @@ export default function App() {
 
 	const translate = () => {
 		const parser = new Parser();
-		parser.parse(formData.input);
-
+		// parser.parse();
 		if (formData.input.length > 0) {
-			let state1 = parser.parse1(formData.input); // exercise 1
-			let state2 = parser.parse2(formData.input); // exercise 2
-			// output.value = 'Ejercicio 1: ' + state1;
+			let state = parser.parse1(formData.input);
 			setFormData((prevState) => ({
 				...prevState,
-				output: 'Ejercicio 1: ' + state1 + '\nEjercicio 2: ' + state2,
+				output: `resultado: ${state}`,
 			}));
 		}
 	};

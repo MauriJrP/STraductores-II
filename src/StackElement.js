@@ -1,29 +1,30 @@
 import Stack from './Stack';
 
 class StackElement {
-	constructor(column, element = null) {
-		this.column = column;
+	constructor(pos, element = null) {
+		this.pos = pos;
 		this.element = element;
 	}
 }
 
 // class Terminal which extends StackElement
 class Terminal extends StackElement {
-	constructor(column, element) {
-		super(column, element);
+	constructor(pos, element) {
+		super(pos, element);
 	}
 }
 
 class NonTerminal extends StackElement {
-	constructor(column, element, node) {
-		super(column, element);
-		// let node = new Node(column);
+	constructor(pos, element, node) {
+		super(pos, element);
+		// let node = new Node(pos);
 	}
 }
 
 class State extends StackElement {
-	constructor(column) {
-		super(column);
+	constructor(pos) {
+		// represent row in the lr table
+		super(pos);
 	}
 }
 
@@ -37,24 +38,24 @@ class E1 extends Node {
 	// excercise 1
 	constructor(stack) {
 		super(stack);
-		this.s1 = new State(this.stack.pop().column);
+		this.s1 = new State(this.stack.pop().pos);
 		this.id1 = this.stack.pop();
-		this.s2 = new State(this.stack.pop().column);
+		this.s2 = new State(this.stack.pop().pos);
 		this.stack.pop();
-		this.s3 = new State(this.stack.pop().column);
+		this.s3 = new State(this.stack.pop().pos);
 		this.id2 = this.stack.pop();
 	}
 
 	print = () => {
 		// print the variables
 		console.log('s1: ');
-		console.log(this.s1.column);
+		console.log(this.s1.pos);
 		console.log('id1: ');
 		console.log(this.id1.element);
 		console.log('s2: ');
-		console.log(this.s2.column);
+		console.log(this.s2.pos);
 		console.log('s3: ');
-		console.log(this.s3.column);
+		console.log(this.s3.pos);
 		console.log('id2: ');
 		console.log(this.id2.element);
 	};
@@ -64,24 +65,24 @@ class E2 extends Node {
 	// excercise 2
 	constructor(stack) {
 		super(stack);
-		this.s1 = new State(this.stack.pop().column);
+		this.s1 = new State(this.stack.pop().pos);
 		this.nonTerminal = this.stack.pop();
-		this.s2 = new State(this.stack.pop().column);
+		this.s2 = new State(this.stack.pop().pos);
 		this.stack.pop();
-		this.s3 = new State(this.stack.pop().column);
+		this.s3 = new State(this.stack.pop().pos);
 		this.id = this.stack.pop();
 	}
 
 	print = () => {
 		// print the variables
 		console.log('s1: ');
-		console.log(this.s1.column);
+		console.log(this.s1.pos);
 		console.log('No terminal: ');
 		console.log(this.nonTerminal.element);
 		console.log('s2: ');
-		console.log(this.s2.column);
+		console.log(this.s2.pos);
 		console.log('s3: ');
-		console.log(this.s3.column);
+		console.log(this.s3.pos);
 		console.log('id: ');
 		console.log(this.id.element);
 	};
@@ -91,7 +92,7 @@ class E22 extends Node {
 	// excercise 2 part 2
 	constructor(stack) {
 		super(stack);
-		this.s1 = new State(this.stack.pop().column);
+		this.s1 = new State(this.stack.pop().pos);
 		this.id1 = this.stack.pop();
 		this.nonTerminal = new NonTerminal(3, 'E');
 	}
@@ -99,7 +100,7 @@ class E22 extends Node {
 	print = () => {
 		// print the variables
 		console.log('s1: ');
-		console.log(this.s1.column);
+		console.log(this.s1.pos);
 		console.log('id1: ');
 		console.log(this.id1.element);
 	};
