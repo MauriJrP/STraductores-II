@@ -38,15 +38,14 @@ export default class Parser {
 	reduction = (rule, table) => {
 		const ruleNum = Math.abs(rule + 2); // rule position on rulesInfo array from 0
 		const ruleInfo = this.rulesInfo[ruleNum];
-		// console.log(ruleInfo);
 
 		// this.tree = rules[`r${ruleNum + 1}`](this.stack, ruleInfo); for when the rules have sense
 		this.tree = rules.r1(this.stack, ruleInfo, this.tree); // rules start from 1
-		this.tree.print();
+		// this.tree.print();
 
 		let top = this.stack.top().pos;
 		this.stack.push(
-			new StackElement('NonTerminal', ruleInfo.pos, ruleInfo.name)
+			new StackElement('NonTerminal', ruleInfo.pos, ruleInfo.name, this.tree)
 		);
 		this.stack.push(
 			new StackElement('State', parseInt(this.table[top][this.stack.top().pos]))
@@ -74,7 +73,7 @@ export default class Parser {
 			else if (action >= 1) this.shift(token, action); // shifts
 		}
 
-		// this.tree.print();
+		this.tree.print();
 		return state;
 	};
 

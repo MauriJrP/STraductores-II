@@ -1,4 +1,4 @@
-const pops = (stack, pops = 0, node) => {
+const pops = (stack, pops = 0) => {
 	const states = [];
 	const terminals = [];
 	const nonTerminals = [];
@@ -13,10 +13,6 @@ const pops = (stack, pops = 0, node) => {
 				break;
 			case 'NonTerminal':
 				nonTerminals.push(stack.pop().getClass());
-				if (node !== null) {
-					// nonTerminals[nonTerminals.length - 1].setNode(node);
-					// console.log('entro');
-				}
 				break;
 			case 'State':
 				states.push(stack.pop().getClass());
@@ -29,8 +25,12 @@ const pops = (stack, pops = 0, node) => {
 
 const print = (name, states, terminals, nonTerminals) => {
 	console.log(name, states, terminals, nonTerminals);
-	// if (nonTerminals.length > 0)
-	// 	nonTerminals.forEach((nonTerminal) => nonTerminal.node.print());
+	if (nonTerminals.length > 0)
+		nonTerminals.forEach((symbol) => {
+			if (symbol.node) {
+				symbol.node.print();
+			}
+		});
 };
 
 export const rules = {
@@ -43,6 +43,7 @@ export const rules = {
 		);
 		return {
 			print: () => print(name, states, terminals, nonTerminals),
+			getName: () => name,
 		};
 	},
 };
