@@ -1,30 +1,43 @@
 import Stack from './Stack';
 
 class StackElement {
-	constructor(pos, element = null) {
+	constructor(type, pos, element = null) {
+		this.type = type;
 		this.pos = pos;
 		this.element = element;
 	}
+
+	getType = () => this.type;
+
+	getClass = () => {
+		switch (this.type) {
+			case 'Terminal':
+				return new Terminal(this.type, this.pos, this.element);
+			case 'NonTerminal':
+				return new NonTerminal(this.type, this.pos, this.element);
+			case 'State':
+				return new State(this.type, this.pos);
+		}
+	};
 }
 
 // class Terminal which extends StackElement
 class Terminal extends StackElement {
-	constructor(pos, element) {
-		super(pos, element);
+	constructor(type, pos, element) {
+		super(type, pos, element);
 	}
 }
 
 class NonTerminal extends StackElement {
-	constructor(pos, element, node) {
-		super(pos, element);
+	constructor(type, pos, element) {
+		super(type, pos, element);
 		// let node = new Node(pos);
 	}
 }
 
 class State extends StackElement {
-	constructor(pos) {
-		// represent row in the lr table
-		super(pos);
+	constructor(type, pos) {
+		super(type, pos);
 	}
 }
 
