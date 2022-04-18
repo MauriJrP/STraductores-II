@@ -1,5 +1,5 @@
 export const data = {
-	rules: `24	1	programa
+	rules: `24	1	Programa
 25	0	Definiciones
 25	2	Definiciones
 26	1	Definicion
@@ -50,8 +50,7 @@ export const data = {
 45	3	Expresion
 45	3	Expresion
 45	3	Expresion
-45	1	Expresion
-`,
+45	1	Expresion`,
 	table: `0	0	0	0	5	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	-3	1	2	3	4	0	6	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	-1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0
 0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	-2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0

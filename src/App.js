@@ -40,10 +40,10 @@ export default function App() {
 		// parser.test();
 		// parser.parse();
 		if (formData.input.length > 0) {
-			let state = parser.parse1(formData.input);
+			let result = parser.parse(formData.input);
 			setFormData((prevState) => ({
 				...prevState,
-				output: `resultado: ${state}`,
+				output: `resultado: ${result}`,
 			}));
 		}
 	};

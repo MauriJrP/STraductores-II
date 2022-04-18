@@ -16,7 +16,7 @@ class StackElement {
 			case 'NonTerminal':
 				return new NonTerminal(this.type, this.pos, this.element);
 			case 'State':
-				return new State(this.type, this.pos);
+				return new State(this.type, this.pos, this.element);
 		}
 	};
 }
@@ -31,8 +31,10 @@ class Terminal extends StackElement {
 class NonTerminal extends StackElement {
 	constructor(type, pos, element) {
 		super(type, pos, element);
-		// let node = new Node(pos);
+		this.node = null;
 	}
+
+	setNode = (node) => (this.node = node);
 }
 
 class State extends StackElement {

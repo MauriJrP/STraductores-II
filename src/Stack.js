@@ -29,7 +29,10 @@ class Stack {
 	};
 
 	print = function () {
-		console.log(this.items);
+		// console.log(this.items);
+		this.items.forEach((element) => {
+			console.log(element.type, element.pos, element.element);
+		});
 	};
 }
 
