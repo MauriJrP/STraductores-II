@@ -34,13 +34,9 @@ const print = (name, states, terminals, nonTerminals) => {
 };
 
 export const rules = {
-	r1: (stack, ruleInfo, node) => {
+	r1: (stack, ruleInfo) => {
 		const name = ruleInfo.name;
-		const [states, terminals, nonTerminals] = pops(
-			stack,
-			ruleInfo.symbols * 2,
-			node
-		);
+		const [states, terminals, nonTerminals] = pops(stack, ruleInfo.symbols * 2);
 		return {
 			print: () => print(name, states, terminals, nonTerminals),
 			getName: () => name,

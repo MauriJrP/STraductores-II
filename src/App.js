@@ -37,8 +37,6 @@ export default function App() {
 
 	const translate = () => {
 		const parser = new Parser();
-		// parser.test();
-		// parser.parse();
 		if (formData.input.length > 0) {
 			let result = parser.parse(formData.input);
 			setFormData((prevState) => ({
