@@ -7,7 +7,14 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
-const columns = [
+import { IColumn } from './types';
+import { IToken } from '../compiler/types';
+
+interface IProps {
+	tokens: IToken[];
+}
+
+const columns: IColumn[] = [
 	{ id: 'lexeme', label: 'Lexema', minWidth: 170 },
 	{ id: 'token', label: 'Token', minWidth: 100 },
 	{
@@ -18,7 +25,7 @@ const columns = [
 	},
 ];
 
-export default function TokensTable({ tokens }) {
+export default function TokensTable({ tokens }: IProps) {
 	return (
 		<Paper sx={{ overflow: 'hidden', margin: 'auto' }} elevation={24}>
 			<TableContainer sx={{ maxHeight: 300 }} className="scrollbar-hide">
@@ -39,11 +46,13 @@ export default function TokensTable({ tokens }) {
 					</TableHead>
 					<TableBody>
 						{tokens.map((element, index) => {
-							// console.log(element);
 							return (
 								<TableRow hover role="checkbox" tabIndex={-1} key={index}>
 									{columns.map((column, i) => {
-										const value = element[column.id];
+										let value: string = '';
+										if (column.id === 'lexeme') value = element.lexeme;
+										else if (column.id === 'token') value = element.token;
+										else if (column.id === 'type') value = (element.pos).toString();
 										return (
 											<TableCell
 												key={i}

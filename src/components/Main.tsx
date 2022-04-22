@@ -4,25 +4,32 @@ import { useState } from 'react';
 import Parser from '../compiler/Parser';
 import { Lexer } from '../compiler/Lexer';
 
-export default function Main(props) {
-	const [formData, setFormData] = useState({ input: '', output: '' });
+import {IToken} from '../compiler/types';
+import { IFormData } from './types';
 
-	const handleChange = (e) => {
-		const { name, value } = e.target;
-		setFormData((prevState) => ({
+interface IProps {
+	setTokens: (tokens: IToken[]) => void;
+}
+
+export default function Main(props: IProps) {
+	const [formData, setFormData] = useState<IFormData>({ input: '', output: '' });
+
+	const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>): void => {
+		const { name, value } = e.target as HTMLTextAreaElement;
+		setFormData((prevState: IFormData): IFormData => ({
 			...prevState,
 			[name]: value,
 		}));
 	};
 
 	// handle tabs in textarea
-	const handleKeyDown = (e) => {
-		const textarea = e.target;
+	const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>): void => {
+		const textarea = e.target as HTMLTextAreaElement;
 		if (e.key === 'Tab' && !e.shiftKey) {
 			e.preventDefault();
-			const selectionStart = textarea.selectionStart;
-			const selectionEnd = textarea.selectionEnd;
-			setFormData((prevState) => ({
+			const selectionStart: number = textarea.selectionStart;
+			const selectionEnd: number = textarea.selectionEnd;
+			setFormData((prevState: IFormData): IFormData => ({
 				...prevState,
 				input:
 					prevState.input.substring(0, selectionStart) +
@@ -37,14 +44,14 @@ export default function Main(props) {
 		}
 	};
 
-	const translate = () => {
-		const parser = new Parser();
-		const lexer = new Lexer();
+	const translate = (): void => {
+		const parser: Parser = new Parser();
+		const lexer: Lexer = new Lexer();
 
 		if (formData.input.length > 0) {
 			props.setTokens(lexer.getTokens(formData.input));
-			let result = parser.parse(formData.input);
-			setFormData((prevState) => ({
+			let result: string = parser.parse(formData.input);
+			setFormData((prevState: IFormData): IFormData => ({
 				...prevState,
 				output: `resultado: ${result}`,
 			}));
@@ -59,8 +66,8 @@ export default function Main(props) {
 				</h2>
 				<textarea
 					name="input"
-					cols="60"
-					rows="20"
+					cols={60}
+					rows={20}
 					autoFocus={true}
 					className="px-3 py-5 bg-slate-50 border-2 border-t-0 border-slate-700 resize-none text-sm outline-0 w-full font-bold"
 					onChange={handleChange}
@@ -89,7 +96,7 @@ export default function Main(props) {
 				</h2>
 				<textarea
 					name="output"
-					rows="20"
+					rows={20}
 					autoFocus={true}
 					className="px-3 py-5 bg-slate-50 border-2 border-t-0 border-slate-700 resize-none text-sm outline-0 w-full font-bold"
 					readOnly={true}
