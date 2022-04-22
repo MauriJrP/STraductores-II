@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/STraductores-II/static/css/main.66643730.css",
+    "main.js": "/STraductores-II/static/js/main.ac86fa71.js",
+    "index.html": "/STraductores-II/index.html",
+    "main.66643730.css.map": "/STraductores-II/static/css/main.66643730.css.map",
+    "main.ac86fa71.js.map": "/STraductores-II/static/js/main.ac86fa71.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.66643730.css",
+    "static/js/main.ac86fa71.js"
+  ]
+}
