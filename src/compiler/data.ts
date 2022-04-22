@@ -1,4 +1,6 @@
-export const data = {
+import {IData} from './types'
+
+export const data: IData = {
 	rules: `24	1	Programa
 25	0	Definiciones
 25	2	Definiciones

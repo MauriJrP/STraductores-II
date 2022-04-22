@@ -1,8 +1,8 @@
 import React from 'react';
 import { useState } from 'react';
 
-import Parser from './Parser';
-import Lexer from './Lexer';
+import Parser from '../compiler/Parser';
+import { Lexer } from '../compiler/Lexer';
 
 export default function Main(props) {
 	const [formData, setFormData] = useState({ input: '', output: '' });
@@ -42,7 +42,7 @@ export default function Main(props) {
 		const lexer = new Lexer();
 
 		if (formData.input.length > 0) {
-			props.setElements(lexer.getElements(formData.input));
+			props.setTokens(lexer.getTokens(formData.input));
 			let result = parser.parse(formData.input);
 			setFormData((prevState) => ({
 				...prevState,

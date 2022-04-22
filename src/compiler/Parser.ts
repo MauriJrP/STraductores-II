@@ -1,15 +1,23 @@
-import Stack from './Stack';
-import Lexer from './Lexer';
-import StackElement from './StackElement';
+import { Stack } from './Stack';
+import { Lexer } from './Lexer';
+import { StackElement } from './StackElement';
 import { data } from './data';
 import { rules } from './rules';
+import { IData, INode, IRuleInfo, IToken } from './types';
 
 export default class Parser {
+	data: IData;
+	stack: Stack<StackElement>;
+	lexer: Lexer;
+	tree?: INode;
+	table: string[][];
+	rulesInfo: IRuleInfo[];
+
 	constructor() {
 		this.data = data;
 		this.stack = new Stack();
 		this.lexer = new Lexer();
-		this.tree = null;
+		this.tree = undefined;
 
 		// parse table & rules
 		const rows = this.data.table.split('\n');
@@ -29,32 +37,32 @@ export default class Parser {
 		this.stack.push(new StackElement('State', 0));
 	}
 
-	shift = (token, num /*row in lr table*/) => {
+	shift = (token: IToken, num: number /*row in lr table*/): void => {
 		this.stack.push(new StackElement('Terminal', token.pos, token.lexeme));
 		this.stack.push(new StackElement('State', num));
 	};
 
-	reduction = (rule) => {
-		const ruleNum = Math.abs(rule + 2); // rule position on rulesInfo array from 0
-		const ruleInfo = this.rulesInfo[ruleNum];
+	reduction = (rule: number): void => {
+		const ruleNum: number = Math.abs(rule + 2); // rule position on rulesInfo array from 0
+		const ruleInfo: IRuleInfo = this.rulesInfo[ruleNum];
 
 		// this.tree = rules[`r${ruleNum + 1}`](this.stack, ruleInfo); for when the rules have sense
-		this.tree = rules.r1(this.stack, ruleInfo, this.tree); // rules start from 1
+		this.tree = rules.r1(this.stack, ruleInfo); // rules start from 1
 
-		let top = this.stack.top().pos;
+		let top: number = this.stack.top().pos;
 		this.stack.push(
-			new StackElement('NonTerminal', ruleInfo.pos, ruleInfo.name, this.tree)
+			new StackElement('NonTerminal', parseInt(ruleInfo.pos), ruleInfo.name, this.tree)
 		);
 		this.stack.push(
 			new StackElement('State', parseInt(this.table[top][this.stack.top().pos]))
 		);
 	};
 
-	parse = (input) => {
-		let state = '';
+	parse = (input: string): string => {
+		let state: string = '';
 
-		let action = 1; // value in the position of the lr table
-		let token = { token: '', lexeme: '', pos: 0 };
+		let action: number = 1; // value in the position of the lr table
+		let token: IToken | null = { token: '', lexeme: '', pos: 0 };
 
 		while (state === '') {
 			if (action > 0 && token.lexeme !== '$') {
@@ -72,7 +80,7 @@ export default class Parser {
 			else if (action >= 1) this.shift(token, action); // shifts
 		}
 
-		this.tree.print();
+		this.tree?.print();
 		return state;
 	};
 }

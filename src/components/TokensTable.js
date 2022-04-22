@@ -18,7 +18,7 @@ const columns = [
 	},
 ];
 
-export default function TokensTable({ elements }) {
+export default function TokensTable({ tokens }) {
 	return (
 		<Paper sx={{ overflow: 'hidden', margin: 'auto' }} elevation={24}>
 			<TableContainer sx={{ maxHeight: 300 }} className="scrollbar-hide">
@@ -38,7 +38,7 @@ export default function TokensTable({ elements }) {
 						</TableRow>
 					</TableHead>
 					<TableBody>
-						{elements.map((element, index) => {
+						{tokens.map((element, index) => {
 							// console.log(element);
 							return (
 								<TableRow hover role="checkbox" tabIndex={-1} key={index}>

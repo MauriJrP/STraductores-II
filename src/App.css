@@ -1,9 +1,0 @@
-textarea {
-	line-height: calc(1.25rem * 2);
-	background-image: linear-gradient(
-		transparent,
-		transparent 1.25rem,
-		#e7eff8 0px
-	);
-	background-size: 100% calc(1.25rem * 2);
-}
