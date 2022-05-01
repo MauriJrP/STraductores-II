@@ -1,6 +1,6 @@
 import {Stack} from './Stack';
 import {StackElement, Terminal, NonTerminal, State} from './StackElement';
-import {IRuleInfo, INode} from './types';
+import {IRuleInfo, INode, IScope} from './types';
 
 const pops = (stack: Stack<StackElement>, pops: number = 0): [State[], Terminal[], NonTerminal[]] => {
 	const states: State[]  = [];
@@ -38,8 +38,8 @@ const pops = (stack: Stack<StackElement>, pops: number = 0): [State[], Terminal[
 	return [states, terminals, nonTerminals];
 };
 
-const print = (name: string, states: State[], terminals: Terminal[], nonTerminals: NonTerminal[]): void => {
-	console.log(name, states, terminals, nonTerminals);
+const print = (ruleNum: number, name: string, states: State[], terminals: Terminal[], nonTerminals: NonTerminal[]): void => {
+	console.log(ruleNum, name, states, terminals, nonTerminals);
 	if (nonTerminals.length > 0)
 		nonTerminals.forEach((symbol) => {
 			if (symbol.node) {
@@ -48,13 +48,45 @@ const print = (name: string, states: State[], terminals: Terminal[], nonTerminal
 		});
 };
 
-export const rules = {
-	r1: (stack: Stack<StackElement>, ruleInfo: IRuleInfo): INode => {
+// function that determine the type of a string between string, int or float
+const typeOf = (str: string): string => {
+	if (str.match(/^[0-9]+$/)) return 'int';
+	if (str.match(/^[0-9]+\.[0-9]+$/)) return 'float';
+	return 'string';
+};
+
+const tabSim = () => {
+	const scopes: IScope[] = [
+		{
+			scope: 'global',
+			values: new Map<string, string>(),
+		},
+		{
+			scope: 'foo',
+			values: new Map<string, string>(),
+		},
+	];
+	return {
+		insert: (identifier: string, type: string, scope?: string,): void => {
+			if (scope) scopes.push({scope, values: new Map<string, string>()});
+			scopes[scopes.length - 1].values.set(identifier, type);
+		},
+		removeScope: () => {scopes.pop()},
+		find: (identifier: string) => {},
+	}
+}
+
+const validate = (ruleNum: number, terminals: Terminal[], nonTerminals: NonTerminal[]): boolean => {
+	return true;
+}
+
+export const getNodeWithPops = (stack: Stack<StackElement>, ruleInfo: IRuleInfo, ruleNum: number): INode => {
 		const name: string = ruleInfo.name;
+		const ruleNumber: number = ruleNum;
 		const [states, terminals, nonTerminals]: [State[], Terminal[], NonTerminal[]] = pops(stack, ruleInfo.symbols * 2);
 		return {
-			print: (): void => print(name, states, terminals, nonTerminals),
 			getName: (): string => name,
+			print: (): void => print(ruleNumber, name, states, terminals, nonTerminals),
+			validate: (): boolean => validate(ruleNumber, terminals, nonTerminals),
 		};
-	},
-};
+	};

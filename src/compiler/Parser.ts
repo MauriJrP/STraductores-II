@@ -2,7 +2,7 @@ import { Stack } from './Stack';
 import { Lexer } from './Lexer';
 import { StackElement } from './StackElement';
 import { data } from './data';
-import { rules } from './rules';
+import { getNodeWithPops } from './SyntaxTree';
 import { IData, INode, IRuleInfo, IToken } from './types';
 
 export default class Parser {
@@ -47,7 +47,7 @@ export default class Parser {
 		const ruleInfo: IRuleInfo = this.rulesInfo[ruleNum];
 
 		// this.tree = rules[`r${ruleNum + 1}`](this.stack, ruleInfo); for when the rules have sense
-		this.tree = rules.r1(this.stack, ruleInfo); // rules start from 1
+		this.tree = getNodeWithPops(this.stack, ruleInfo, ruleNum + 1); // rules start from 1
 
 		let top: number = this.stack.top().pos;
 		this.stack.push(
@@ -77,7 +77,7 @@ export default class Parser {
 			if (action === 0) state = 'error';
 			else if (action === -1) state = 'accept';
 			else if (action <= -2) this.reduction(action);
-			else if (action >= 1) this.shift(token, action); // shifts
+			else if (action >= 1) this.shift(token, action);
 		}
 
 		this.tree?.print();
