@@ -1,3 +1,5 @@
+import {ruleValidation} from './RuleValidation';
+
 export interface IToken {
 	token: string;
 	lexeme: string;
@@ -11,8 +13,9 @@ export interface IRuleInfo {
 }
 
 export interface INode {
-	print(): void;
 	getName(): string;
+	getRuleNumber(): number;
+	print(): void;
 	validate(): boolean;
 }
 
@@ -20,12 +23,6 @@ export interface IData {
 	rules: string,
 	table: string
 }
-
-// export interface scope {
-// 	scope: string,
-// 	type: string,
-// 	value: string,
-// }
 
 export enum StateEnum {
 	NextToken,
@@ -38,12 +35,26 @@ export enum StateEnum {
 	Error,
 }
 
-
 export interface IScope {
 	scope: string,
 	values: Map<string, string>,
 }
 
+export interface IFunction {
+	identifier: string,
+	params: string[],
+}
+
+export type KeyOfRuleValidation = keyof typeof ruleValidation;
+
+export interface ITabSim {
+	insert(identifier: string, type: string, scope?: string): void;
+	removeScope(): void;
+	getScope(): string;
+	setType(newType: string): void;
+	getType(): string;
+	find(identifier: string): void;
+}
 
 //! This method is able to save the scope but keeping only the active values
 //* Symbol Insertion -> tabSim.insert('foo', 'int')

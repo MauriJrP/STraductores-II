@@ -81,6 +81,7 @@ export default class Parser {
 		}
 
 		this.tree?.print();
+		if (!this.tree?.validate()) state = 'error'; // semantic analizer
 		return state;
 	};
 }
